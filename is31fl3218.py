@@ -4,8 +4,8 @@
 import smbus
 
 
-class Sensor(object):
-    """Sensor([bus]) -> Sensor
+class Controller(object):
+    """Controller([bus]) -> Controller
     Return a new is31fl3218 object that is connected to the
     specified I2C device interface.
     """
