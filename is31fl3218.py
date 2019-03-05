@@ -73,7 +73,7 @@ class Controller(object):
         """
         if led >= len(self.REG_ADDR_PWM):
             raise IOError("Invalid LED n.{0}".format(led))
-        gamma_corrected_dc = self.__gamma_correct(duty[0])
+        gamma_corrected_dc = self.__gamma_correct(duty)
         self.__write_registers(self.REG_ADDR_PWM[led], [gamma_corrected_dc])
         if immediately:
             self.__write_registers(self.REG_ADDR_UPDATE, [1])
