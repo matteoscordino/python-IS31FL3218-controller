@@ -1,12 +1,12 @@
-# is31fl3218.py - driver for the I2C based ISSI 31fl3218 LED controller
+# is31fl32xx.py - driver for the I2C based ISSI 31fl3218 LED controller
 
 """This module allows driving the I2C LED controller"""
 import smbus
 
 
-class Controller(object):
+class IS31FL32xx(object):
     """Controller([bus]) -> Controller
-    Return a new is31fl3218 object that is connected to the
+    Return a new is31fl32xx object that is connected to the
     specified I2C device interface.
     """
     REG_ADDR_SHUTDOWN = 0x00
@@ -17,13 +17,14 @@ class Controller(object):
     REG_ADDR_LAST = REG_ADDR_RESET
     _bus = -1
     _debug = False
-    _i2c_addr = 0b1010100
+    _i2c_addr = -1
 
-    def __init__(self, bus=0, debug=False):
+    def __init__(self, bus=0, address=0b1010100, debug=False):
         # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1), etc
         if debug:
-            print "using bus {0}, address {1}".format(bus, self._i2c_addr)
+            print "using bus {0}, address {1}".format(bus, address)
         self._bus = smbus.SMBus(bus)
+        self._i2c_addr = address
         self._debug = debug
 
     def close(self):
@@ -115,3 +116,21 @@ class Controller(object):
         Applies the duty cycles stored in the controller to the LED outputs
         """
         self.__write_registers(self.REG_ADDR_UPDATE, [1])
+
+
+class IS31FL3218(IS31FL32xx):
+    """Controller([bus]) -> Controller
+    Return a new is31fl3218 object that is connected to the
+    specified I2C device interface.
+    """
+    def __init__(self, bus=0, debug=False, address=0b1010100):
+        super(IS31FL3218, self).__init__(bus, address, debug)
+
+
+class IS31FL3209(IS31FL32xx):
+    """Controller([bus]) -> Controller
+    Return a new is31fl3218 object that is connected to the
+    specified I2C device interface.
+    """
+    def __init__(self, bus=0, debug=False, address=0xD8):
+        super(IS31FL3209, self).__init__(bus, address, debug)
