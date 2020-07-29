@@ -14,12 +14,17 @@ class IS31FL32xx(object):
     _debug = False
     _i2c_addr = -1
 
-    def __init__(self, reg_map, bus=0, address=0b1010100, debug=False):
+    def __init__(self, reg_map, bus=0, preinited_bus=None, address=0b1010100, debug=False):
         # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1), etc
-        if debug:
-            print("using bus {0}, address {1}".format(bus, address))
+        if preinited_bus is not None:
+            if debug:
+                print("using preinited-bus, address {0}".format(address))
+            self._bus = preinited_bus
+        else:
+            if debug:
+                print("init-ing bus {0}, address {1}".format(bus, address))
+            self._bus = smbus.SMBus(bus)
         self._reg_map = reg_map
-        self._bus = smbus.SMBus(bus)
         self._i2c_addr = address
         self._debug = debug
 
@@ -105,7 +110,7 @@ class IS31FL3218(IS31FL32xx):
     specified I2C device interface.
     """
 
-    def __init__(self, bus=0, debug=False, address=0b1010100):
+    def __init__(self, bus=0,  preinited_bus=None, debug=False, address=0b1010100):
         reg_map = dict()
         reg_map["shutdown"] = 0x00
         reg_map["pwm"] = tuple(range(0x01, 0x13))
@@ -113,7 +118,7 @@ class IS31FL3218(IS31FL32xx):
         reg_map["update"] = 0x16
         reg_map["reset"] = 0x17
         reg_map["last"] = reg_map["reset"]
-        super(IS31FL3218, self).__init__(reg_map, bus, address, debug)
+        super(IS31FL3218, self).__init__(reg_map, bus, preinited_bus, address, debug)
 
     def enable_leds(self, ena_list):
         """enable_leds()
@@ -141,7 +146,7 @@ class IS31FL3209(IS31FL32xx):
     specified I2C device interface.
     """
 
-    def __init__(self, bus=0, debug=False, address=0x6C):
+    def __init__(self, bus=0,  preinited_bus=None, debug=False, address=0x6C):
         reg_map = dict()
         reg_map["shutdown"] = 0x00
         reg_map["pwm"] = tuple(range(0x01, 0x13))
@@ -151,7 +156,7 @@ class IS31FL3209(IS31FL32xx):
         reg_map["output_frequency_setting"] = 0x27
         reg_map["reset"] = 0x2F
         reg_map["last"] = reg_map["reset"]
-        super(IS31FL3209, self).__init__(reg_map, bus, address, debug)
+        super(IS31FL3209, self).__init__(reg_map, bus,  preinited_bus, address, debug)
 
     def enable_leds(self, ena_list):
         """enable_leds()
