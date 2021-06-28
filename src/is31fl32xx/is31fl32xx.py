@@ -55,7 +55,7 @@ class IS31FL32xx(object):
             raise IOError(
                 "Writing {0} bytes from reg {1} would go over the last register".format(len(list(values)), reg_addr))
 
-        self._bus.write_i2c_block_data(self._i2c_addr, reg_addr, values)
+        self._bus.write_i2c_block_data(self._i2c_addr, reg_addr, list(values))
 
     def shutdown(self, off=True):
         """shutdown()
